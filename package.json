@@ -1,0 +1,40 @@
+{
+  "name": "lm-ui-element-plus",
+  "files": [
+    "lib"
+  ],
+  "main": "./lib/lm-ui-element-plus.umd.js",
+  "module": "./lib/lm-ui-element-plus.es.js",
+  "version": "0.0.0",
+  "private": false,
+  "author": "杨涟",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "build:lib": "npm run build && npm run build:style && npm run build:utils",
+    "build:style": "gulp build --gulpfile packages/lm-ui-element-style/gulpfile.js && cp-cli packages/lm-ui-element-style/lib lib/lm-ui-element-style && cp-cli packages/lm-ui-element-style/src/utils lib/lm-ui-element-style/utils",
+    "build:utils": "cp-cli packages/utils lib/utils",
+    "pub": "npm publish --registry https://registry.npmjs.org"
+  },
+  "dependencies": {
+    "node-sass": "^6.0.1",
+    "vue": "^3.0.5",
+    "vue-cropper": "^0.5.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.2.5",
+    "@vue/compiler-sfc": "^3.0.5",
+    "cp-cli": "^1.0.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "sass": "^1.35.2",
+    "vite": "^2.4.3"
+  },
+  "exports": {
+    ".": {
+      "import": "./lib/lm-ui-element-plus.es.js",
+      "require": "./lib/lm-ui-element-plus.umd.js"
+    }
+  }
+}

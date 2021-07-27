@@ -1,0 +1,22 @@
+{
+  "name": "lm-ui-element-style",
+  "version": "0.2.6",
+  "description": "lm-ui-element-style",
+  "main": "lib/index.css",
+  "style": "lib/index.css",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "gulp build"
+  },
+  "author": "杨涟",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-autoprefixer": "^4.0.0",
+    "gulp-cssmin": "^0.1.7",
+    "gulp-sass": "^3.1.0"
+  }
+}

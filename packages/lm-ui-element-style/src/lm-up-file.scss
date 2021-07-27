@@ -1,0 +1,53 @@
+@import "./utils/mix";
+.upfile-with-progress{
+  .fileList{
+    flex-wrap:wrap;
+    .fileListBox{
+      margin:0 0px 10px 0;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      .fileProgressBox{
+        width:100%;
+        .fileItemBox{
+          padding-right:20px;
+          width:100%;
+          box-sizing: border-box;
+          .file{
+            max-width:100%;
+            .el-button{
+              display: flex;
+              span{
+                word-break: break-all;
+                white-space: normal;
+                text-align: left;
+              }
+              .el-icon-loading{
+                color:#FC982A;
+              }
+            }
+          }
+        }
+      }
+
+    }
+  }
+  .el-dialog{
+    @include positionCenter();
+    margin-top:0 !important;
+    min-width:50%;
+  }
+}
+.upfile-with-progress .el-progress-circle{
+  background:rgba(0,0,0,0.5);
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
+.upfile-with-progress .el-progress__text{
+  /*color:#ffffff;*/
+  font-size:12px;
+}
+.upfile-with-progress .el-form-item__content{
+  line-height:normal;
+}

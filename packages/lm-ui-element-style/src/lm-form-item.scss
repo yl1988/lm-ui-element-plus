@@ -1,0 +1,23 @@
+.lm-form-item-col textarea{
+  height:inherit;
+}
+.lm-form-item-col{
+  .dateTimeConnection{
+    display:inline-block;
+    text-align:center;
+    padding:0 10px;
+  }
+}
+.lmTexts {
+  display: flex;
+  align-items: center;
+  .textSpan{
+    display:inline-block;
+    overflow:hidden;
+    margin-right:10px;
+    width:auto;
+  }
+  .textareaSpan{
+
+  }
+}
