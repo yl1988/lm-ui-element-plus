@@ -4,9 +4,9 @@
     <el-form-item :label="label" :prop="prop" :label-width="lmFormLabelWidth" ref="formItemRef" :required="required" :style="{'margin-bottom':marginBottom || (isEdit ? '22px' : '0')}">
       <div v-if="isEdit" style="text-align:left;">
         <el-autocomplete v-if="elAuto"
-                         :modelValue="lmFormValue"
                          :style="{width:lmFormItemWidth,height:lmFormItemHeight}"
-                         @update:modelValue="lmInputInput"
+                         :model-value="lmFormValue"
+                         @update:model-value="lmInputInput"
                          :type="type"
                          :placeholder="placeholder"
                          :size="size"
@@ -41,9 +41,9 @@
           </template>
         </el-autocomplete>
         <el-input v-else
-                  :modelValue="lmFormValue"
                   :style="{width:lmFormItemWidth,height:lmFormItemHeight}"
-                  @update:modelValue="lmInputInput" :type="type"
+                  :model-value="lmFormValue"
+                  @update:model-value="lmInputInput"
                   :placeholder="placeholder" :size="size"
                   @keyup.native.13="$emit('enter')"
                   :maxlength="lmInputMaxlength" :minlength="lmInputMinlength"
@@ -57,7 +57,6 @@
                   @keyup.native="v=>$emit('keyup',v)"
                   v-bind="$attrs"
                   ref="lmInput"
-
         >
           <template slot="append">
             <slot name="append">
@@ -127,7 +126,7 @@ export default {
       default:()=>[]
     },///输入框建议数据
   },
-  emits: ['update:modelValue','change'],
+  emits: ['update:modelValue','change','keydown','keyup','focus','enter'],
   data() {
     return {
       lmFormValue:null,//值
@@ -147,7 +146,6 @@ export default {
     type==='number' && (this.lmInputMaxlength=maxlength || 15)
     if(this.lmShowWordLimit){
       this.$nextTick(()=>{
-        console.log(this.$refs)
         let lmCol=this.$refs.lmCol.$el
         let wordLimitDom=lmCol.querySelector('.el-input__suffix')
         if(wordLimitDom){
@@ -161,8 +159,8 @@ export default {
 
   },
   mounted() {
-    if(this.value || this.value===0){
-      this.lmFormValue=this.value
+    if(this.modelValue || this.modelValue===0){
+      this.lmFormValue=this.modelValue
     }
   },
   methods: {
@@ -173,7 +171,7 @@ export default {
       lmInputMaxlength=Number(lmInputMaxlength)
       if(type==='tel'){
         //电话
-        this.$emit('@update:modelValue',v.replace(/\D/g,''))
+        this.$emit('update:modelValue',v.replace(/\D/g,''))
       }else if(type==='number'){
         // 数字
         if( typeof min==='number' ){
@@ -196,16 +194,16 @@ export default {
             v=lastValue ? (inLengthNum+'.'+lastValue) : inLengthNum
           }
         }
-        this.$emit('@update:modelValue',v)
+        this.$emit('update:modelValue',v)
       }else if(type==='idcard'){
         //身份证
         v=v.replace(/[^\d|xX]/g,'')
         ;/x/.test(v) && (v=v.replace(/x/g,'X'))
         ;/XX/.test(v) && (v=v.replace(/XX/g,'X'))
-        this.$emit('@update:modelValue',v)
+        this.$emit('update:modelValue',v)
       }else{
         v=v.replace(/(^\s*)/g, "") //sql注入
-        this.$emit('@update:modelValue',v)
+        this.$emit('update:modelValue',v)
       }
 
     },
@@ -225,7 +223,7 @@ export default {
     },
   },
   watch:{
-    value:function (v) {
+    modelValue:function (v) {
       this.lmFormValue=v
     },
   },

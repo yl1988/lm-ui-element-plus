@@ -3,7 +3,7 @@
   <el-row>
     <el-form-item :label="label" class="addressFormItemBox" :required="required" :prop="addressProp" :style="{'margin-bottom':isEdit ? '22px' : '0'}">
       <div v-if="isEdit" class="rowStart">
-        <el-select class="addressFormItem" :size="size" :value="address.provinceId" @input="changeProvince" placeholder="请选择" :filterable="filterable" :style="{width:lmSelectWidth}" :disabled="typeof disabled==='boolean' ? disabled : (!!disabled[3] || !!disabled[2] || !!disabled[1] || !!disabled[0])">
+        <el-select class="addressFormItem" :size="size" :model-value="address.provinceId" @input="changeProvince" placeholder="请选择" :filterable="filterable" :style="{width:lmSelectWidth}" :disabled="typeof disabled==='boolean' ? disabled : (!!disabled[3] || !!disabled[2] || !!disabled[1] || !!disabled[0])">
           <el-option
               v-for="item in provinceList"
               :key="item.id"
@@ -11,7 +11,7 @@
               :value="item.id">
           </el-option>
         </el-select>
-        <el-select class="addressFormItem" :size="size" :value="address.cityId" @change="changeCity" placeholder="请选择" :filterable="filterable" :style="{width:lmSelectWidth}" :disabled="typeof disabled==='boolean' ? disabled : (!!disabled[3] || !!disabled[2] || !!disabled[1])">
+        <el-select class="addressFormItem" :size="size" :model-value="address.cityId" @change="changeCity" placeholder="请选择" :filterable="filterable" :style="{width:lmSelectWidth}" :disabled="typeof disabled==='boolean' ? disabled : (!!disabled[3] || !!disabled[2] || !!disabled[1])">
           <el-option
               v-for="item in cityList"
               :key="item.id"
@@ -19,7 +19,7 @@
               :value="item.id">
           </el-option>
         </el-select>
-        <el-select class="addressFormItem" v-if="isNotTwoLevels" :size="size" :value="address.districtId" @change="changeDistrict" placeholder="请选择" :filterable="filterable" :style="{width:lmSelectWidth}" :disabled="typeof disabled==='boolean' ? disabled : (!!disabled[3] || !!disabled[2])">
+        <el-select class="addressFormItem" v-if="isNotTwoLevels" :size="size" :model-value="address.districtId" @change="changeDistrict" placeholder="请选择" :filterable="filterable" :style="{width:lmSelectWidth}" :disabled="typeof disabled==='boolean' ? disabled : (!!disabled[3] || !!disabled[2])">
           <el-option
               v-for="item in districtList"
               :key="item.id"
@@ -31,7 +31,7 @@
           <el-autocomplete
               class="addressFormInput"
               v-if="elAuto" :style="{width:streetInputWidth}" :size="size" placeholder="请输入"
-              :value="address.street" :maxlength="maxlength"
+              :model-value="address.street" :maxlength="maxlength"
               @blur="streetBlur" @input="streetInput"
               @select="inputAutoSelect" :fetch-suggestions="inputQuerySearch"
               :value-key="valueKey" :placement="placement" :trigger-on-focus="triggerOnFocus"
@@ -49,7 +49,7 @@
               class="addressFormInput"
               :style="{width:streetInputWidth}"
               :size="size" placeholder="请输入"
-              :value="address.street"
+              :model-value="address.street"
               @blur="streetBlur" @input="streetInput"
               :maxlength="maxlength"
               :disabled="typeof disabled==='boolean' ? disabled : !!disabled[3]"
@@ -67,7 +67,7 @@ import provinceList from './province.json'
 import citys from './city.json'
 import districts from './district.json'
 import xhlHttp from '../../utils/xml-http'
-const { jsonp } =require( '../../utils/jsonp')
+import * as jsonp from '../../utils/jsonp'
 export default {
   name: 'LmAddress',
   props: {
@@ -171,7 +171,7 @@ export default {
       this.addressArea[1] = this.addressArea[2] = ''
       this.addressArea[0] = thisProvince[0].name
       this.address.addressArea = this.addressArea
-      this.$emit('input', this.address)
+      this.$emit('update:modelValue', this.address)
       this.$emit('addressChange',this.address)
       this.$emit('provinceChange',this.address)
     },
@@ -185,7 +185,7 @@ export default {
       this.addressArea[2] = ''
       this.addressArea[1] = thisCity[0].name
       this.address.addressArea = this.addressArea
-      this.$emit('input', this.address)
+      this.$emit('update:modelValue', this.address)
       this.$emit('addressChange',this.address)
       this.$emit('cityChange',this.address)
     },
@@ -199,7 +199,7 @@ export default {
       this.getLngLat && !this.hasLngLag && this.addressArea[3] && this.getLngLatFun(this.addressArea.join(''))
       this.address.addressArea = this.addressArea
       this.address.showStreet = this.showStreet
-      this.$emit('input', this.address)
+      this.$emit('update:modelValue', this.address)
       this.$emit('addressChange',this.address)
       this.$emit('districtChange',this.address)
     },
@@ -218,14 +218,14 @@ export default {
       this.address.addressArea = this.addressArea
       let {isNotTwoLevels, showStreet} = this
       this.address = {...this.address, addressArea: this.addressArea, isNotTwoLevels, showStreet}
-      this.$emit('input', this.address)
+      this.$emit('update:modelValue', this.address)
       this.$emit('streetChange', this.address)
     },
     //输入框输入内容
     async streetInput(value){
       value=value.trim()
       this.$set(this.address,'street',value)
-      this.$emit('input', this.address)
+      this.$emit('update:modelValue', this.address)
       this.$emit('addressChange',this.address)
     },
     //输入框搜索点击完成

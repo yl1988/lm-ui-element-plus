@@ -21,7 +21,6 @@
                        :on-error="fileErr"
                        v-if="isEdit && (typeof limit==='undefined' || (typeof limit==='number' && (fileList.length<limit)))"
                        v-bind="$attrs"
-                       v-on="$listeners"
             >
               <div >
                 <slot name="chooseFileBtn">

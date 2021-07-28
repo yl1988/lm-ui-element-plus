@@ -5,20 +5,20 @@
       <div v-if="isEdit" class="lmElSelectBox" style="text-align:left;">
         <!--下拉框-->
         <el-select v-if="formType==='select'" :modelValue="lmFormValue"
-                   @update:modelValue="lmFormItemChange"
+                   @update:model-value="lmFormItemChange"
                    :size="size" :class="selectClass"
                    :placeholder="selectPlaceholder"
                    :style="{width:lmFormItemWidth}"
                    :filterable="filterable" :disabled="disabled"
         >
-          <el-option :label="o[oName] || o" :modelValue="o[oValue] || index" v-for="(o,index) in list" :key="index"></el-option>
+          <el-option :label="o[oName] || o" :value="o[oValue] || index" v-for="(o,index) in list" :key="index"></el-option>
         </el-select>
         <!--多个下拉框-->
         <div v-if="formType==='multiSelect'" class="rowStart">
           <el-select
             v-for="(lmItem,index) in multiList" :key="index"
             :modelValue="lmFormMultiValues[index]"
-            @update:modelValue="v=>lmFormMultiItemChange(v,index)"
+            @update:model-value="v=>lmFormMultiItemChange(v,index)"
             :size="size"
             :placeholder="lmDateMultiSelectPlaceholder[index]"
             :style="{width:lmFormItemWidth,margin:multiMargin}"
@@ -26,13 +26,13 @@
           >
             <el-option
               :label="oName instanceof Array ? o[oName[index]] : (o[oName] || o)"
-              :modelValue="oValue instanceof Array ? o[oValue[index]] : (o[oValue] || oIndex)"
+              :value="oValue instanceof Array ? o[oValue[index]] : (o[oValue] || oIndex)"
               v-for="(o,oIndex) in lmItem" :key="oIndex"
             ></el-option>
           </el-select>
         </div>
         <!--单选按钮-->
-        <el-radio-group v-if="formType==='radio'"  :modelValue="lmFormValue" @update:modelValue="lmFormItemChange" :size="size" :style="{width:lmFormItemWidth}">
+        <el-radio-group v-if="formType==='radio'"  :modelValue="lmFormValue" @update:model-value="lmFormItemChange" :size="size" :style="{width:lmFormItemWidth}">
           <el-radio :disabled="disabled" style="margin-right:20px;color:#888888;" :label="o[oValue] || index" v-for="(o,index) in list" :key="index">{{o[oName] || o}}</el-radio>
         </el-radio-group>
       </div>
@@ -103,7 +103,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState(['focusHiddenData']),
     //查看状态下显示的文字
     lmTexts(){
       let {formType,list,oName,oValue,multiList,lmFormValue,lmFormMultiValues}=this
@@ -159,11 +158,11 @@ export default {
     }
   },
   mounted() {
-    if(this.value || this.value===0){
+    if(this.modelValue || this.modelValue===0){
       if(this.formType==='multiSelect'){
-        this.lmFormMultiValues=this.value
+        this.lmFormMultiValues=this.modelValue
       }else{
-        this.lmFormValue=this.value
+        this.lmFormValue=this.modelValue
       }
     }
 
@@ -197,12 +196,12 @@ export default {
       // //console.log(value,itemData)
       this.lmFormMultiItemData.splice(selectIndex)
       this.lmFormMultiItemData.push(itemData)
-      this.$emit('@update:modelValue',this.lmFormMultiValues)
+      this.$emit('update:modelValue',this.lmFormMultiValues)
       this.$emit('change',{value,itemData:this.lmFormMultiItemData})
     },
   },
   watch:{
-    value:function (v) {
+    modelValue:function (v) {
       lmFormItemWatch(v,'multiSelect',this)
     },
   },

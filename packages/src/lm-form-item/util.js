@@ -7,7 +7,7 @@ export function lmFormItemChangeFun(value,that){
     let valueIndex=(that.list[0] instanceof Object) ? that.list.findIndex(item=>item[that.oValue]===value) : value
     // //console.log(valueIndex)
     let itemData=that.list[valueIndex]
-    that.$emit('input',value)
+    that.$emit('update:modelValue',value)
     //console.log(value,itemData)
     // //console.log(this.oValue)
     // //console.log(this.list)

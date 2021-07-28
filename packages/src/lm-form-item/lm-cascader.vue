@@ -9,7 +9,6 @@
                          :props="pickerOptions"
                          :filterable="filterable"
                          v-bind="$attrs"
-                         v-on="$listeners"
             ></el-cascader>
             <div class="lmTexts rowStart" v-else>
                 <span class="textSpan" :style="{margin:multiMargin,...spanStyle}" v-if="text">{{text}}</span>

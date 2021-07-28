@@ -10,11 +10,9 @@
                         :value-format="lmDateTimeValueFormat"
                         :format="lmDateTimeFormat"
                         :style="{width:lmFormItemWidth}"
-                        @update:modelValue="lmFormItemChange" :picker-options="pickerOptions"
+                        @update:modelValue="lmFormItemChange" :disabled-date="disabledDate"
                         :default-value="defaultDateTimeValue"
                         :disabled="disabled"
-                        v-bind="$attrs"
-                        v-on="$listeners"
         ></el-date-picker>
         <!--日期范围选择-->
         <div v-if="formType==='rangeDateTime'">
@@ -26,7 +24,7 @@
             :format="lmDateTimeFormat"
             :style="{width:lmFormItemWidth}"
             @update:modelValue="v=>rangeTimeFormItemChange(v,0)"
-            :picker-options="pickerOptions[0]"
+            :disabled-date="disabledDate"
             :size="size" :disabled="disabled"
             :default-value="defaultDateTimeValue[0]"
           ></el-date-picker>
@@ -41,7 +39,7 @@
             :format="lmDateTimeFormat"
             :style="{width:lmFormItemWidth}"
             @update:modelValue="v=>rangeTimeFormItemChange(v,1)"
-            :picker-options="pickerOptions[1]"
+            :disabled-date="endDisabledDate"
             :size="size" :disabled="disabled"
             :default-value="defaultDateTimeValue[1]"
           ></el-date-picker>
@@ -80,16 +78,12 @@ export default {
     },//时间类型
     defaultDateTimeValue:{
       type:[String,Array,Date,Number],
-      default:''
+      default:()=>[]
     },//时间类型默认值
     dateTimeValueFormat:String,//时间格式
     dateTimeFormat:String,//时间格式
-    pickerOptions:{
-      type:[Object,Array],
-      default:()=>{
-        return {}
-      }
-    },//日期配置，级联配置
+    disabledDate:Function,//日期可见
+    endDisabledDate:Function,//日期范围的后面日期可见
     conectionText:{
       type:String,
       default:'-'
@@ -140,13 +134,13 @@ export default {
   methods: {
     //选择框，单选框，时间，级联选择等改变
     lmFormItemChange(value){
-      this.$emit('@update:modelValue',value)
+      this.$emit('update:modelValue',value)
       this.$emit('change',{value})
     },
     //时间范围改变
     rangeTimeFormItemChange(value,type){
       this.$set(this.lmFormMultiValues,type,value)
-      this.$emit('@update:modelValue',this.lmFormMultiValues)
+      this.$emit('update:modelValue',this.lmFormMultiValues)
       this.$emit('change',this.lmFormMultiValues)
     },
   },

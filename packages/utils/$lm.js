@@ -4,8 +4,8 @@
 import {formatDate} from "./lm-methods";
 
 export default {
-    install(Vue) {
-        Vue.prototype.$lm = {
+    install(app, options) {
+        app.config.globalProperties.$lm = {
             // 控制在一个日期范围内不可见
             dateRangeDisabled(time,range=[],config={}){
                 let {startEqual,endEqual,disNow}=config

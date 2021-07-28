@@ -9,9 +9,8 @@ import $lm from '../../packages/utils/$lm'
 const app=createApp(App)
 app.use(ElementPlus)
 app.use($lm)
-app.use(LmLoading)
+// app.use(LmLoading)
 app.use(LmUI)
 // app.prototype.$lmLoading=LmLoading
 
-Vue.config.productionTip = false
 app.mount('#app')

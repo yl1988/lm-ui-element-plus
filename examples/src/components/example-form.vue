@@ -12,7 +12,7 @@
           <lm-date-time  label="开始时间：" v-model="form.startDate " placeholder="请选择开始时间"/>
         </el-row>
         <el-row v-if="form.type===0">
-          <lm-input label="姓名：" v-model="form.name"></lm-input>
+          <lm-input label="姓名：" v-model="form.name"  @update:model-value="lmInputInput"></lm-input>
           <lm-select label="学历：" v-model="form.stuty" :list="['文盲','小学','初中','高中','中专','大专','本科','硕士','博士']"/>
         </el-row>
         <el-row>
@@ -24,41 +24,6 @@
                             {disabledDate:(time)=>$lm.dateRangeDisabled(time,[0, form.rangeDate ? (form.rangeDate[1] || new Date()) : new Date(),{endEqual:true}])},
                             {disabledDate:(time)=>$lm.dateRangeDisabled(time,[form.rangeDate ? (form.rangeDate[0] || 0) : 0, new Date(),{startEqual:true}])}
                             ]"/>
-        </el-row>
-        <el-row>
-          <lm-date-time :span="24" label="周范围：" v-model="form.week" form-type="rangeDateTime" width="200"
-                        :picker-options="[
-                                      {disabledDate:time=>disableDate(time,form.week ? form.week[1] : 0,'start','week')},
-                                      {disabledDate:time=>disableDate(time,form.week ? form.week[0] : 0,'end','week')}
-                                      ]"/>
-        </el-row>
-        <el-row>
-          <lm-date-time :span="24" label="月范围：" v-model="form.month" form-type="rangeDateTime" width="200"
-                        :picker-options="[
-                                      {disabledDate:time=>disableDate(time,form.month ? form.month[1] : 0,'start','month')},
-                                      {disabledDate:time=>disableDate(time,form.month ? form.month[0] : 0,'end','month')}
-                                      ]"/>
-        </el-row>
-        <el-row>
-          <lm-date-time :span="24" label="上半月范围：" v-model="form.halfMonthFirst" form-type="rangeDateTime" width="200"
-                        :picker-options="[
-                                      {disabledDate:time=>disableDate(time,form.halfMonthFirst ? form.halfMonthFirst[1] : 0,'start','halfMonthFirst')},
-                                      {disabledDate:time=>disableDate(time,form.halfMonthFirst ? form.halfMonthFirst[0] : 0,'end','halfMonthFirst')}
-                                      ]"/>
-        </el-row>
-        <el-row>
-          <lm-date-time :span="24" label="下半月范围：" v-model="form.halfMonthTwo" form-type="rangeDateTime" width="200"
-                        :picker-options="[
-                                      {disabledDate:time=>disableDate(time,form.halfMonthTwo ? form.halfMonthTwo[1] : 0,'start','halfMonthTwo')},
-                                      {disabledDate:time=>disableDate(time,form.halfMonthTwo ? form.halfMonthTwo[0] : 0,'end','halfMonthTwo')}
-                                      ]"/>
-        </el-row>
-        <el-row>
-          <lm-date-time :span="24" label="年范围：" v-model="form.year" form-type="rangeDateTime" width="200"
-                        :picker-options="[
-                                      {disabledDate:time=>disableDate(time,form.year ? form.year[1] : 0,'start','year')},
-                                      {disabledDate:time=>disableDate(time,form.year ? form.year[0] : 0,'end','year')}
-                                      ]"/>
         </el-row>
         <lm-address label="住址："
                     v-model="form.companyAddress" :required="false"
@@ -92,7 +57,7 @@ export default {
   data() {
     return {
       otherData:{ bucketName: 'smart-park'},
-      form:{},//保单
+      form:{},//表单
       cascaders:[
         {
           name:'建筑工程',
@@ -148,73 +113,13 @@ export default {
     },1000)
   },
   methods: {
-    disableDate(time,userDate,type,planType){
-      if(!userDate){
-        if(/First/.test(planType) || /Two/.test(planType)){
-          //上半月下半月控制
-          let timeYear=time.getFullYear()
-          let timeMonth=time.getMonth()
-          let timeMonthStart=new Date(timeYear,timeMonth,1)
-          let timeMonthEnd=new Date((new Date(timeYear,timeMonth + 1,1)).getTime() - 1000 * 60 * 60* 24)
-          let timeMiddle=timeMonthStart.getTime()+(timeMonthEnd.getTime()-timeMonthStart.getTime())/2
-          if(/First/.test(planType)){
-            if(time>timeMiddle){
-              return  true
-            }
-          }
-          if(/Two/.test(planType)){
-            if(time<timeMiddle){
-              return  true
-            }
-          }
-        }
-        return  false
-      }
-      let chooseDate=new Date(userDate)
-      let cYear=chooseDate.getFullYear()
-      let cMonth=chooseDate.getMonth()
-      let cDate=chooseDate.getDate()
-      let cDay=chooseDate.getDay()
-      let monthStart=new Date(cYear,cMonth,1)
-      let monthEnd=new Date((new Date(cYear,cMonth + 1,1)).getTime() - 1000 * 60 * 60* 24)
-      let monthMiddle=monthStart.getTime()+(monthEnd.getTime()-monthStart.getTime())/2
-      let dateObj={
-        weekStart:new Date(cYear,cMonth,cDate - cDay +1),
-        weekEnd:new Date(cYear,cMonth,cDate + (7 - cDay)),
-        monthStart,
-        monthEnd,
-        halfMonthFirstStart:monthStart,
-        halfMonthFirstEnd:monthMiddle,
-        halfMonthTwoStart:monthMiddle,
-        halfMonthTwoEnd:monthEnd,
-        yearStart:new Date(cYear, 0, 1),
-        yearEnd:new Date((new Date(cYear + 1, 1, 1)).getTime() - 1000 * 60 * 60* 24)
-      }
-      if(time<dateObj[`${planType}Start`]){
-        return true
-      }
-      if(time>dateObj[`${planType}End`]){
-        return  true
-      }
-      if(type==='end'){
-        //判断的是后一个
-        if(time<chooseDate){
-          return  true
-        }
-      }
-      if(type==='start'){
-        //判断的是前一个
-        if(time>chooseDate){
-          return  true
-        }
-      }
-      return  false
-    },
     save(){
-      console.log(this.fileList)
-      console.log(this.imgList)
+      console.log(this.form)
+      console.log(this.cascaders)
     },
-
+    lmInputInput(value){
+      console.log(value)
+    },
     getLngLatInfo({lng,lat}){
       this.$set(this.form,'lng',lng)
       this.$set(this.form,'lat',lat)

@@ -1,6 +1,6 @@
 <!--图片裁剪-->
 <template>
-  <lm-dialog :width="width" :title="title" ref="customDialog">
+  <lm-dialog :width="width" :title="title" ref="customDialog" :show-footer="false">
     <div class="cropper-component">
       <slot name="sizeWarning">
         <div class="rowCenter" v-if="fileSize && maxSize && fileSize>maxSize">
@@ -39,7 +39,6 @@
                 @realTime="realTime"
                 @imgLoad="imgLoad"
                 v-bind="$attrs"
-                v-on="$listeners"
               ></vueCropper>
               <div class="rowCenter loadingBox" v-if="showLoading">
                 <i class="el-icon-loading font40 gray666"></i>
@@ -64,18 +63,16 @@
         </div>
       </div>
     </div>
-    <template #footer>
-      <slot name="footer">
-        <div class="rowCenter">
-          <div ref="complete" style="margin-right:20px;">
-            <el-button type="primary" style="width:90px;height:40px;">{{completeBtnText}}</el-button>
-          </div>
-          <div ref="cancel" >
-            <el-button style="width:90px;height:40px;">{{cancelBtnText}}</el-button>
-          </div>
+    <slot name="footer">
+      <div class="rowCenter">
+        <div ref="complete" style="margin-right:20px;">
+          <el-button type="primary" style="width:90px;height:40px;">{{completeBtnText}}</el-button>
         </div>
-      </slot>
-    </template>
+        <div ref="cancel" >
+          <el-button style="width:90px;height:40px;">{{cancelBtnText}}</el-button>
+        </div>
+      </div>
+    </slot>
   </lm-dialog>
 </template>
 
@@ -83,6 +80,7 @@
 // import Vue from 'vue'
 import LmDialog from '../lm-dialog/lm-dialog.vue'
 import VueCropper  from 'vue-cropper'
+import exampleImg from './exampleImg.svg'
 // Vue.use(VueCropper)
 export default {
   name: 'LmImgCropper',
@@ -130,7 +128,7 @@ export default {
     fileSize:Number,//文件尺寸
     exampleImg:{
       type:String,
-      default:require('./exampleImg.svg')
+      default:exampleImg
     },//示例图片路径
     maxSize:{
       type:[Number,String],
