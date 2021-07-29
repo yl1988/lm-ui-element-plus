@@ -5,7 +5,7 @@
   ],
   "main": "./lib/lm-ui-element-plus.umd.js",
   "module": "./lib/lm-ui-element-plus.es.js",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "author": "杨涟",
   "scripts": {
