@@ -18,7 +18,6 @@ export default function ({url, method = 'GET', data = {}, params = {}, type = 'j
     xhr.onreadystatechange = function() {
       if(xhr.readyState === 4) {
         if(xhr.status === 200 || xhr.status === 304) {
-          console.log(xhr.response)
           resolve(xhr.response)
         } else {
           reject(xhr.statusText)

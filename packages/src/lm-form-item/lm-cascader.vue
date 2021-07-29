@@ -49,6 +49,10 @@
                     }
                 }
             },//日期配置，级联配置
+          list:{
+            type:Array,
+            default:()=>[]
+          },//数据
         },
       emits: ['update:modelValue','change'],
         data() {
@@ -67,6 +71,7 @@
         methods: {
             //选择框，单选框，时间，级联选择等改变
             lmFormItemChange(value){
+
                 lmFormItemChangeFun(value,this)
             },
             // 操作文字数据
@@ -89,7 +94,7 @@
             }
         },
         watch:{
-            value:function (v) {
+          modelValue:function (v) {
                 if(v instanceof Array){
                     this.lmFormValue=v
                     this.optionText(v)

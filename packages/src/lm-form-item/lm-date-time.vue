@@ -4,14 +4,16 @@
     <el-form-item :label="label" :prop="prop" :label-width="lmFormLabelWidth" ref="formItemRef" :required="required" :style="{'margin-bottom':marginBottom || (isEdit ? '22px' : '0')}">
       <div v-if="isEdit" class="lmElSelectBox" style="text-align:left;">
         <!--日期选择-->
-        <el-date-picker v-if="formType==='dateTime'" :type="dateTimeType"
-                        :modelValue="lmFormValue" :size="size"
+        <el-date-picker v-if="formType==='dateTime'"
+                        :type="dateTimeType"
+                        :model-value="lmFormValue"
+                        :size="size"
                         :placeholder="lmDateTimePlaceholder"
                         :value-format="lmDateTimeValueFormat"
                         :format="lmDateTimeFormat"
                         :style="{width:lmFormItemWidth}"
-                        @update:modelValue="lmFormItemChange" :disabled-date="disabledDate"
-                        :default-value="defaultDateTimeValue"
+                        @update:model-value="lmFormItemChange"
+                        :disabled-date="disabledDate"
                         :disabled="disabled"
         ></el-date-picker>
         <!--日期范围选择-->
@@ -19,14 +21,13 @@
           <el-date-picker
             :type="dateTimeType"
             :placeholder="lmDateTimePlaceholder[0]"
-            :modelValue="lmFormMultiValues[0]"
+            :model-value="lmFormMultiValues[0]"
             :value-format="lmDateTimeValueFormat"
             :format="lmDateTimeFormat"
             :style="{width:lmFormItemWidth}"
-            @update:modelValue="v=>rangeTimeFormItemChange(v,0)"
+            @update:model-value="v=>rangeTimeFormItemChange(v,0)"
             :disabled-date="disabledDate"
             :size="size" :disabled="disabled"
-            :default-value="defaultDateTimeValue[0]"
           ></el-date-picker>
           <slot name="conection">
             <div class="dateTimeConnection">{{conectionText}}</div>
@@ -34,14 +35,13 @@
           <el-date-picker
             :type="dateTimeType"
             :placeholder="lmDateTimePlaceholder[1]"
-            :modelValue="lmFormMultiValues[1]"
+            :model-value="lmFormMultiValues[1]"
             :value-format="lmDateTimeValueFormat"
             :format="lmDateTimeFormat"
             :style="{width:lmFormItemWidth}"
-            @update:modelValue="v=>rangeTimeFormItemChange(v,1)"
+            @update:model-value="v=>rangeTimeFormItemChange(v,1)"
             :disabled-date="endDisabledDate"
             :size="size" :disabled="disabled"
-            :default-value="defaultDateTimeValue[1]"
           ></el-date-picker>
         </div>
       </div>
@@ -76,10 +76,6 @@ export default {
       type:String,
       default:'date'
     },//时间类型
-    defaultDateTimeValue:{
-      type:[String,Array,Date,Number],
-      default:()=>[]
-    },//时间类型默认值
     dateTimeValueFormat:String,//时间格式
     dateTimeFormat:String,//时间格式
     disabledDate:Function,//日期可见
@@ -101,35 +97,28 @@ export default {
       startDatePlaceholder:'',//起始日期日期placeholder
       endDatePlaceholder:'',//结束日期日期placeholder
       lmDateTimePlaceholder:'请选择',//时间范围placeholder
-      lmDateTimeFormat:'yyyy-MM-dd',//时间显示格式
-      lmDateTimeValueFormat:'yyyy-MM-dd',//时间值格式
+      lmDateTimeFormat:'YYYY-MM-DD',//时间显示格式
+      lmDateTimeValueFormat:'YYYY-MM-DD',//时间值格式
     }
   },
   created(){
     let {formType,placeholder,dateTimeType,dateTimeValueFormat,dateTimeFormat}=this
     if(formType==='dateTime'){
       placeholder !=='请选择' && (this.lmDateTimePlaceholder=placeholder)
-    }
-    if(formType==='rangeDateTime'){
+    }else if(formType==='rangeDateTime'){
       placeholder instanceof Array ? (this.lmDateTimePlaceholder=placeholder) : (this.lmDateTimePlaceholder=['请选择','请选择'])
     }
     if(dateTimeType==='datetime'){
-      this.lmDateTimeFormat=dateTimeFormat || 'yyyy-MM-dd HH:mm:ss'
-      this.lmDateTimeValueFormat=dateTimeValueFormat ||  'yyyy-MM-dd HH:mm:ss'
+      this.lmDateTimeFormat=dateTimeFormat || 'YYYY-MM-DD HH:mm:ss'
+      this.lmDateTimeValueFormat=dateTimeValueFormat ||  'YYYY-MM-DD HH:mm:ss'
     }else{
-      this.lmDateTimeFormat=dateTimeFormat || 'yyyy-MM-dd'
-      this.lmDateTimeValueFormat=dateTimeValueFormat|| 'yyyy-MM-dd'
+      this.lmDateTimeFormat=dateTimeFormat || 'YYYY-MM-DD'
+      this.lmDateTimeValueFormat=dateTimeValueFormat|| 'YYYY-MM-DD'
     }
+    console.log(this.lmDateTimeFormat)
   },
   mounted() {
-    if(this.value){
-      if(this.formType==='rangeDateTime'){
-        this.lmFormMultiValues=this.value
-      }else{
-        this.lmFormValue=this.value
-      }
-    }
-
+    this.modelValue && ( this.formType==='rangeDateTime' ? (this.lmFormMultiValues=this.modelValue) : ( this.lmFormValue=this.modelValue))
   },
   methods: {
     //选择框，单选框，时间，级联选择等改变
@@ -139,13 +128,13 @@ export default {
     },
     //时间范围改变
     rangeTimeFormItemChange(value,type){
-      this.$set(this.lmFormMultiValues,type,value)
+      this.lmFormMultiValues[type]=value
       this.$emit('update:modelValue',this.lmFormMultiValues)
       this.$emit('change',this.lmFormMultiValues)
     },
   },
   watch:{
-    value:function (v) {
+    modelValue:function (v) {
       lmFormItemWatch(v,'rangeDateTime',this)
     },
   },

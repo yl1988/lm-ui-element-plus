@@ -8,12 +8,8 @@
           <lm-select label="学历：" v-model="form.stuty" :list="['文盲','小学','初中','高中','中专','大专','本科','硕士','博士']"/>
         </el-row>
         <el-row>
-          <lm-select form-type="radio" label="类型：" v-model="form.type " disabled/>
+          <lm-select form-type="radio" label="类型：" v-model="form.type "/>
           <lm-date-time  label="开始时间：" v-model="form.startDate " placeholder="请选择开始时间"/>
-        </el-row>
-        <el-row v-if="form.type===0">
-          <lm-input label="姓名：" v-model="form.name"  @update:model-value="lmInputInput"></lm-input>
-          <lm-select label="学历：" v-model="form.stuty" :list="['文盲','小学','初中','高中','中专','大专','本科','硕士','博士']"/>
         </el-row>
         <el-row>
           <lm-cascader label="证书：" :options="cascaders"/>
@@ -31,11 +27,11 @@
                     @addressChange="addressChange"
                     :disabled="[false,false,false,false]"
                     :get-lng-lat="getLngLat"
-                    amap-key="75de5ea5e06bf7f25f26495225594885"
+                    bmap-key="rDENPM5Fl6EGPpbdbZGxtzp09NVrMKRB"
         />
         <el-row>
           <lm-input label="经度：" v-model="form.lng" type="number" maxlength="10" to-fixed="4"/>
-          <lm-input label="纬度：" v-model="form.lat" type="idcard"/>
+          <lm-input label="纬度：" v-model="form.lat"/>
         </el-row>
         <el-row>
           <lm-input label="电话：" v-model="form.tess " type="tel" @change="phoneChange"/>
@@ -121,8 +117,8 @@ export default {
       console.log(value)
     },
     getLngLatInfo({lng,lat}){
-      this.$set(this.form,'lng',lng)
-      this.$set(this.form,'lat',lat)
+      this.form.lng=lng
+      this.form.lat=lat
     },
     addressChange(value){
       console.log(value)

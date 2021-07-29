@@ -3,7 +3,7 @@
   <el-row>
     <el-form-item :label="label" class="addressFormItemBox" :required="required" :prop="addressProp" :style="{'margin-bottom':isEdit ? '22px' : '0'}">
       <div v-if="isEdit" class="rowStart">
-        <el-select class="addressFormItem" :size="size" :model-value="address.provinceId" @input="changeProvince" placeholder="请选择" :filterable="filterable" :style="{width:lmSelectWidth}" :disabled="typeof disabled==='boolean' ? disabled : (!!disabled[3] || !!disabled[2] || !!disabled[1] || !!disabled[0])">
+        <el-select class="addressFormItem" :size="size" :model-value="address.provinceId" @update:model-value="changeProvince" placeholder="请选择" :filterable="filterable" :style="{width:lmSelectWidth}" :disabled="typeof disabled==='boolean' ? disabled : (!!disabled[3] || !!disabled[2] || !!disabled[1] || !!disabled[0])">
           <el-option
               v-for="item in provinceList"
               :key="item.id"
@@ -32,7 +32,7 @@
               class="addressFormInput"
               v-if="elAuto" :style="{width:streetInputWidth}" :size="size" placeholder="请输入"
               :model-value="address.street" :maxlength="maxlength"
-              @blur="streetBlur" @input="streetInput"
+              @blur="streetBlur" @update:model-value="streetInput"
               @select="inputAutoSelect" :fetch-suggestions="inputQuerySearch"
               :value-key="valueKey" :placement="placement" :trigger-on-focus="triggerOnFocus"
               :disabled="typeof disabled==='boolean' ? disabled : !!disabled[3]"
@@ -50,7 +50,7 @@
               :style="{width:streetInputWidth}"
               :size="size" placeholder="请输入"
               :model-value="address.street"
-              @blur="streetBlur" @input="streetInput"
+              @blur="streetBlur" @update:model-value="streetInput"
               :maxlength="maxlength"
               :disabled="typeof disabled==='boolean' ? disabled : !!disabled[3]"
           ></el-input>
@@ -67,7 +67,7 @@ import provinceList from './province.json'
 import citys from './city.json'
 import districts from './district.json'
 import xhlHttp from '../../utils/xml-http'
-import * as jsonp from '../../utils/jsonp'
+import '../../utils/jsonp'
 export default {
   name: 'LmAddress',
   props: {
@@ -114,7 +114,7 @@ export default {
     maxlength:[String,Number],//地址输入框的最大长度
     selectWidth:[Number,String],//下拉框宽度
     disabled:[Boolean,Array],//是否可见
-    value:Object,//值
+    modelValue:Object,//值
     getLngLat:{
       type:Boolean,
       default:true
@@ -125,6 +125,7 @@ export default {
       type:String,
       default:'gcj02ll'
     },//坐标系类型
+    emits: ['update:modelValue','change','keydown','keyup','focus','enter'],
   },
   data() {
     return {
@@ -146,9 +147,9 @@ export default {
     let {inputWidth,selectWidth,lmSelectWidth} = this
     this.streetInputWidth = (typeof inputWidth === 'number' || isNumber(inputWidth)) ? (inputWidth + 'px') : inputWidth
     this.lmSelectWidth = (typeof selectWidth === 'number' || isNumber(selectWidth)) ? (selectWidth + 'px') : lmSelectWidth
-    if(this.value){
-      this.address =JSON.parse(JSON.stringify(this.value))
-      this.handleGetCityAndDistrict(this.value)
+    if(this.modelValue){
+      this.address =JSON.parse(JSON.stringify(this.modelValue))
+      this.handleGetCityAndDistrict(this.modelValue)
     }else{
       if(this.defaultAddress){
         this.address =JSON.parse(JSON.stringify(this.defaultAddress))
@@ -161,10 +162,8 @@ export default {
   methods: {
     // // 点击切换省份
     changeProvince(val) {
-      this.$set(this.address, 'provinceId', val)
-      this.$set(this.address, 'cityId', '')
-      this.$set(this.address, 'districtId', '')
-      this.$set(this.address, 'street', '')
+      this.address.provinceId=val
+      this.address.cityId=this.address.districtId=this.address.street=''
       this.districtList = []
       this.cityList = citys[val]
       let thisProvince = this.provinceList.filter((item) => item.id === val)
@@ -179,8 +178,8 @@ export default {
     changeCity(val) {
       this.districtList = districts[val] || []
       this.isNotTwoLevels=!!this.districtList.length
-      this.$set(this.address, 'cityId', val)
-      this.$set(this.address, 'districtId', '')
+      this.address.cityId=val
+      this.address.districtId=''
       let thisCity = this.cityList.filter(item => item.id === val)
       this.addressArea[2] = ''
       this.addressArea[1] = thisCity[0].name
@@ -192,7 +191,7 @@ export default {
     // 点击切换区县
     async changeDistrict(val) {
       let {districtList} = this
-      this.$set(this.address, 'districtId', val)
+      this.address.districtId=val
       this.hasLngLag = false
       let thisdistrictList = districtList.filter(item => item.id === val)
       this.addressArea[2] = thisdistrictList[0].name
@@ -224,7 +223,7 @@ export default {
     //输入框输入内容
     async streetInput(value){
       value=value.trim()
-      this.$set(this.address,'street',value)
+      this.address.street=value
       this.$emit('update:modelValue', this.address)
       this.$emit('addressChange',this.address)
     },
@@ -239,6 +238,7 @@ export default {
     },
     //输入框返回建议数据
     async inputQuerySearch(queryString, cb) {
+      console.log(queryString)
       let inputQueryData=[]
       if(queryString || this.addressArea.length){
         let searchAddressArea=JSON.parse(JSON.stringify(this.addressArea))
@@ -305,6 +305,7 @@ export default {
           })
         }else if(bmapKey){
           //百度地图服务api
+          console.log(jsonp)
           jsonp('http://api.map.baidu.com/place/v2/suggestion', {
             ak:bmapKey,
             query:keywords,
@@ -364,11 +365,7 @@ export default {
       this.fullAddress = `${province} ${city} ${district} ${street}`
       this.addressArea = [province, city]
       this.addressArea[3] = street
-      if (district) {
-        this.addressArea[2] = district
-      } else {
-        this.addressArea[2] = city
-      }
+      this.addressArea[2]=district || city
       //有默认值，并且需要获取默认经纬度时，获取经纬度
       if(this.getLngLat){
         if(this.isNotTwoLevels){
@@ -382,7 +379,7 @@ export default {
         }
       }
       this.address.addressArea=this.addressArea
-      this.$emit("input", this.address)
+      this.$emit("update:modelValue", this.address)
     },
     //通过地址查询经纬度
     getLngLatFun(address) {
@@ -422,7 +419,7 @@ export default {
             })
         }else if(bmapKey){
           //百度地图服务api
-          jsonp('http://api.map.baidu.com/geocoding/v3/', {
+          VueJsonp.jsonp('http://api.map.baidu.com/geocoding/v3/', {
             ak:bmapKey,
             address,
             city,
@@ -474,7 +471,7 @@ export default {
     }
   },
   watch: {
-    value:function (value,oldValue){
+    modelValue:function (value,oldValue){
       if(JSON.stringify(value)===JSON.stringify(oldValue)){
         return
       }
