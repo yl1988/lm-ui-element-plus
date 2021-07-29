@@ -13,6 +13,6 @@ app.use($lm)
 app.use(router)
 // app.use(LmLoading)
 app.use(LmUI)
-// app.prototype.$lmLoading=LmLoading
+// app.config.globalProperties.$lmLoading=LmLoading
 
 app.mount('#app')
