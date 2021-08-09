@@ -305,8 +305,7 @@ export default {
           })
         }else if(bmapKey){
           //百度地图服务api
-          console.log(jsonp)
-          jsonp('http://api.map.baidu.com/place/v2/suggestion', {
+          VueJsonp.jsonp('http://api.map.baidu.com/place/v2/suggestion', {
             ak:bmapKey,
             query:keywords,
             region:this.addressArea[1],

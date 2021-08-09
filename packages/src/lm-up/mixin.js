@@ -49,6 +49,7 @@ export default {
       }
     },//字段配置
     resConfig:Object,//返回值配置
+    defaultValue:Array,//默认值
   },
   emits: ['update:modelValue','filePreview','fileChange','beforeUpload','fileSuccess','delFile','fileErr','fileMethodChange'],
   data() {
@@ -60,7 +61,21 @@ export default {
       valid:false,//是否校验了
     }
   },
+  mounted() {
+    if(Array.isArray(this.defaultValue) && this.defaultValue.length){
+      this.getDefaultValue(this.defaultValue)
+    }
+  },
   methods: {
+    getDefaultValue(list){
+      this.fileList.splice(0)
+      for(let i=0;i<list.length;i++){
+        this.fileList.push({
+          ...list[i]
+        })
+      }
+      this.$emit('input',JSON.parse(JSON.stringify(this.fileList)))
+    },
     //文件获取
     fileChange(file,fileList){
       this.$emit('fileChange',{file,fileList})
@@ -278,4 +293,11 @@ export default {
       })
     }
   },
+  watch:{
+    defaultValue:function (v,oldValue){
+      if(JSON.stringify(v)!==JSON.stringify(oldValue)){
+        this.getDefaultValue(v)
+      }
+    }
+  }
 }
