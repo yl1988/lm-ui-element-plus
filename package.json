@@ -9,10 +9,11 @@
   "private": false,
   "author": "杨涟",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview",
-    "build:lib": "npm run build && npm run build:style && npm run build:utils",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint",
+    "build:lib": "vue-cli-service build --target lib --name lm-ui-element --dest lib packages/index.js && npm run build:style && npm run build:utils",
     "build:style": "gulp build --gulpfile packages/lm-ui-element-style/gulpfile.js && cp-cli packages/lm-ui-element-style/lib lib/lm-ui-element-style && cp-cli packages/lm-ui-element-style/src/utils lib/lm-ui-element-style/utils",
     "build:utils": "cp-cli packages/utils lib/utils",
     "pub": "npm publish --registry https://registry.npmjs.org"
@@ -23,13 +24,23 @@
     "vue-cropper": "^0.5.6"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.2.5",
-    "@vue/compiler-sfc": "^3.0.5",
-    "cp-cli": "^1.0.2",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "sass": "^1.35.2",
-    "vite": "^2.4.3"
+    "@babel/plugin-transform-runtime": "^7.13.7",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.1.5",
+    "@vue/test-utils": "^1.0.3",
+    "babel-eslint": "^10.1.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "cp-cli": "1.0.2",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^8.0.2",
+    "vue": "^3.0.5",
+    "vue-cli": "^2.9.6",
+    "vue-template-compiler": "^2.6.11"
   },
   "exports": {
     ".": {
